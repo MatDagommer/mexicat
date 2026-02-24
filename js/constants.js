@@ -16,9 +16,6 @@ const GAME_CONFIG = {
   PLAYER_MAX_SPEED: 6,
   PLAYER_FRICTION: 0.85,
 
-  // Visual ground level (cat floats freely above it)
-  GROUND_Y: 450,
-
   // Game settings
   STAGE_DURATION: 120000,  // 2 minutes in milliseconds
   BASE_SPEED: 5,

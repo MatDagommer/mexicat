@@ -173,11 +173,9 @@ class Game {
 
   spawnObstacle() {
     const speed = this.stageManager.getCurrentSpeed();
-    const obstacle = new Obstacle(
-      GAME_CONFIG.SPAWN_X,
-      GAME_CONFIG.GROUND_Y - 60, // Position at ground level
-      speed
-    );
+    // Random Y position anywhere on screen (with margin for obstacle height)
+    const y = Math.random() * (GAME_CONFIG.CANVAS_HEIGHT - 80) + 10;
+    const obstacle = new Obstacle(GAME_CONFIG.SPAWN_X, y, speed);
     this.obstacles.push(obstacle);
   }
 
@@ -186,17 +184,8 @@ class Game {
     const type = GAME_CONFIG.COLLECTIBLE_TYPES[
       Math.floor(Math.random() * GAME_CONFIG.COLLECTIBLE_TYPES.length)
     ];
-
-    // Random height (can be on ground or in the air for jumping)
-    const heightVariations = [
-      GAME_CONFIG.GROUND_Y - 30,  // On ground
-      GAME_CONFIG.GROUND_Y - 80,  // Low jump height
-      GAME_CONFIG.GROUND_Y - 130, // Medium jump height
-      GAME_CONFIG.GROUND_Y - 180  // High jump height
-    ];
-
-    const y = heightVariations[Math.floor(Math.random() * heightVariations.length)];
-
+    // Random Y position anywhere on screen
+    const y = Math.random() * (GAME_CONFIG.CANVAS_HEIGHT - 40) + 5;
     const collectible = new Collectible(GAME_CONFIG.SPAWN_X, y, type, speed);
     this.collectibles.push(collectible);
   }
@@ -227,15 +216,40 @@ class Game {
     }
   }
 
+  drawStarWarsTitle(ctx, text, centerX, startY) {
+    // Render text to offscreen canvas first
+    const offscreen = document.createElement('canvas');
+    const offCtx = offscreen.getContext('2d');
+    offscreen.width = 600;
+    offscreen.height = 120;
+
+    offCtx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+    offCtx.font = 'bold 90px "Courier New", monospace';
+    offCtx.textAlign = 'center';
+    offCtx.textBaseline = 'top';
+    offCtx.fillText(text, 300, 5);
+
+    // Draw with perspective: each horizontal slice gets wider toward the bottom
+    const textHeight = 95;
+    for (let i = 0; i < textHeight; i++) {
+      const progress = i / textHeight; // 0 at top, 1 at bottom
+      const scale = 0.5 + progress * 0.7; // narrow at top, wide at bottom
+      const sliceWidth = 600 * scale;
+
+      ctx.drawImage(
+        offscreen,
+        0, 5 + i, 600, 1,
+        centerX - sliceWidth / 2, startY + i, sliceWidth, 1
+      );
+    }
+  }
+
   renderMenu() {
     // Draw background even in menu
     this.background.draw(this.ctx);
 
-    // Draw title
-    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
-    this.ctx.font = 'bold 48px "Courier New", monospace';
-    this.ctx.textAlign = 'center';
-    this.ctx.fillText('MEXICAT RUNNER', this.canvas.width / 2, 150);
+    // Draw Star Wars-style perspective title
+    this.drawStarWarsTitle(this.ctx, 'MEXICAT', this.canvas.width / 2, 60);
 
     // Draw a simple cat preview
     this.ctx.save();
