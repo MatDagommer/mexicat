@@ -21,7 +21,7 @@ class Obstacle {
   }
 
   draw(ctx) {
-    ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+    ctx.fillStyle = GAME_CONFIG.COLOR_CACTUS_GREEN;
 
     // Main cactus body
     ctx.fillRect(this.x + 10, this.y, 10, this.height);
@@ -35,7 +35,7 @@ class Obstacle {
     ctx.fillRect(this.x + 17, this.y + 30, 3, 8);
 
     // Spikes (small lines)
-    ctx.strokeStyle = GAME_CONFIG.COLOR_BLACK;
+    ctx.strokeStyle = GAME_CONFIG.COLOR_CACTUS_GREEN;
     ctx.lineWidth = 2;
     for (let i = 5; i < this.height; i += 10) {
       // Left side spikes

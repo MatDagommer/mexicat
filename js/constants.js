@@ -8,7 +8,7 @@ const GAME_CONFIG = {
   // Player settings
   PLAYER_START_X: 100,
   PLAYER_START_Y: 300,  // Center of screen
-  PLAYER_WIDTH: 40,
+  PLAYER_WIDTH: 50,
   PLAYER_HEIGHT: 40,
 
   // Player movement (Nyan Cat style)
@@ -36,7 +36,18 @@ const GAME_CONFIG = {
   COLOR_BLACK: '#000000',
   COLOR_WHITE: '#FFFFFF',
   COLOR_GRAY: '#EEEEEE',
-  COLOR_LIGHT_GRAY: '#CCCCCC'
+  COLOR_LIGHT_GRAY: '#CCCCCC',
+
+  // Desert theme colors
+  COLOR_SAND: '#E8D4A2',  // Warm sand color
+  COLOR_SAND_DARK: '#C9B380',  // Darker sand for texture
+  COLOR_CACTUS_GREEN: '#4A7C59',  // Desert cactus green
+
+  // Food colors
+  COLOR_TACO_YELLOW: '#F4D03F',  // Taco shell yellow
+
+  // Player colors
+  COLOR_CAT_BODY: '#8BA3B8'  // Gray/blue for cat body
 };
 
 // Keyboard keys

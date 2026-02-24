@@ -32,12 +32,12 @@ class Background {
   }
 
   draw(ctx) {
-    // Plain white background
-    ctx.fillStyle = GAME_CONFIG.COLOR_WHITE;
+    // Desert sand background
+    ctx.fillStyle = GAME_CONFIG.COLOR_SAND;
     ctx.fillRect(0, 0, this.width, this.height);
 
-    // Subtle scrolling dots (sand/ground texture from above)
-    ctx.fillStyle = GAME_CONFIG.COLOR_LIGHT_GRAY;
+    // Subtle scrolling dots (sand texture from above)
+    ctx.fillStyle = GAME_CONFIG.COLOR_SAND_DARK;
     this.dots.forEach(dot => {
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);

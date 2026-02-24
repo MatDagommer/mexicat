@@ -48,7 +48,7 @@ class Collectible {
     // Taco shell (half circle / U shape)
     ctx.strokeStyle = GAME_CONFIG.COLOR_BLACK;
     ctx.lineWidth = 2.5;
-    ctx.fillStyle = GAME_CONFIG.COLOR_WHITE;
+    ctx.fillStyle = GAME_CONFIG.COLOR_TACO_YELLOW;
 
     // Shell shape
     ctx.beginPath();
