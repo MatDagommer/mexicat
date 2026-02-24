@@ -1,4 +1,4 @@
-# Mexicat Runner
+# Mexicat
 
 A fun Mexican-themed endless runner game where a cat must avoid cactuses while collecting delicious Mexican food!
 
