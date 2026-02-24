@@ -1,0 +1,323 @@
+// Game Class - Core game loop and state management
+
+class Game {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.state = 'menu'; // menu, playing, gameover
+    this.score = 0;
+    this.lastTimestamp = 0;
+
+    // Stage management
+    this.stageManager = new StageManager();
+    this.stageTimer = 0;
+    this.stageDuration = GAME_CONFIG.STAGE_DURATION;
+
+    // Spawn timers
+    this.obstacleTimer = 0;
+    this.collectibleTimer = 0;
+
+    // Entity collections
+    this.player = null;
+    this.obstacles = [];
+    this.collectibles = [];
+    this.background = null;
+
+    this.init();
+  }
+
+  init() {
+    // Initialize entities
+    this.player = new Player(
+      GAME_CONFIG.PLAYER_START_X,
+      GAME_CONFIG.PLAYER_START_Y
+    );
+
+    this.background = new Background(
+      this.canvas.width,
+      this.canvas.height,
+      this.stageManager.getCurrentSpeed()
+    );
+
+    // Start game loop
+    this.gameLoop(0);
+  }
+
+  start() {
+    if (this.state === 'menu') {
+      this.state = 'playing';
+      this.score = 0;
+      this.stageTimer = 0;
+      this.stageManager.reset();
+      this.obstacles = [];
+      this.collectibles = [];
+      this.obstacleTimer = 0;
+      this.collectibleTimer = 1000; // Start collectibles after 1 second
+
+      // Reset player
+      this.player = new Player(
+        GAME_CONFIG.PLAYER_START_X,
+        GAME_CONFIG.PLAYER_START_Y
+      );
+
+      // Reset background
+      this.background = new Background(
+        this.canvas.width,
+        this.canvas.height,
+        this.stageManager.getCurrentSpeed()
+      );
+    }
+  }
+
+  restart() {
+    this.state = 'menu';
+    this.start();
+  }
+
+  gameLoop(timestamp) {
+    const deltaTime = timestamp - this.lastTimestamp;
+    this.lastTimestamp = timestamp;
+
+    this.update(deltaTime);
+    this.render();
+
+    requestAnimationFrame((t) => this.gameLoop(t));
+  }
+
+  update(deltaTime) {
+    if (this.state !== 'playing') return;
+
+    // Update stage timer
+    this.stageTimer += deltaTime;
+    if (this.stageTimer >= this.stageDuration) {
+      this.advanceStage();
+    }
+
+    // Update all entities
+    this.player.update(deltaTime);
+    this.background.update(deltaTime);
+
+    this.updateObstacles(deltaTime);
+    this.updateCollectibles(deltaTime);
+
+    // Check collisions
+    this.checkCollisions();
+
+    // Spawn new entities
+    this.spawnEntities(deltaTime);
+  }
+
+  updateObstacles(deltaTime) {
+    // Update all obstacles
+    this.obstacles.forEach(obstacle => obstacle.update(deltaTime));
+
+    // Remove offscreen obstacles
+    this.obstacles = this.obstacles.filter(obstacle => !obstacle.offscreen);
+  }
+
+  updateCollectibles(deltaTime) {
+    // Update all collectibles
+    this.collectibles.forEach(collectible => collectible.update(deltaTime));
+
+    // Remove offscreen or collected collectibles
+    this.collectibles = this.collectibles.filter(
+      collectible => !collectible.offscreen && !collectible.collected
+    );
+  }
+
+  checkCollisions() {
+    const playerBounds = this.player.getBounds();
+
+    // Check obstacle collisions (with padding for forgiving gameplay)
+    for (const obstacle of this.obstacles) {
+      const obstacleBounds = obstacle.getBounds();
+      if (checkCollisionWithPadding(playerBounds, obstacleBounds, 5)) {
+        this.gameOver();
+        return;
+      }
+    }
+
+    // Check collectible collisions
+    for (const collectible of this.collectibles) {
+      if (!collectible.collected) {
+        const collectibleBounds = collectible.getBounds();
+        if (checkCollision(playerBounds, collectibleBounds)) {
+          collectible.collected = true;
+          this.score += collectible.points;
+        }
+      }
+    }
+  }
+
+  spawnEntities(deltaTime) {
+    // Spawn obstacles
+    this.obstacleTimer += deltaTime;
+    if (this.obstacleTimer >= this.stageManager.obstacleSpawnRate) {
+      this.spawnObstacle();
+      this.obstacleTimer = 0;
+    }
+
+    // Spawn collectibles
+    this.collectibleTimer += deltaTime;
+    if (this.collectibleTimer >= this.stageManager.collectibleSpawnRate) {
+      this.spawnCollectible();
+      this.collectibleTimer = 0;
+    }
+  }
+
+  spawnObstacle() {
+    const speed = this.stageManager.getCurrentSpeed();
+    const obstacle = new Obstacle(
+      GAME_CONFIG.SPAWN_X,
+      GAME_CONFIG.GROUND_Y - 60, // Position at ground level
+      speed
+    );
+    this.obstacles.push(obstacle);
+  }
+
+  spawnCollectible() {
+    const speed = this.stageManager.getCurrentSpeed();
+    const type = GAME_CONFIG.COLLECTIBLE_TYPES[
+      Math.floor(Math.random() * GAME_CONFIG.COLLECTIBLE_TYPES.length)
+    ];
+
+    // Random height (can be on ground or in the air for jumping)
+    const heightVariations = [
+      GAME_CONFIG.GROUND_Y - 30,  // On ground
+      GAME_CONFIG.GROUND_Y - 80,  // Low jump height
+      GAME_CONFIG.GROUND_Y - 130, // Medium jump height
+      GAME_CONFIG.GROUND_Y - 180  // High jump height
+    ];
+
+    const y = heightVariations[Math.floor(Math.random() * heightVariations.length)];
+
+    const collectible = new Collectible(GAME_CONFIG.SPAWN_X, y, type, speed);
+    this.collectibles.push(collectible);
+  }
+
+  advanceStage() {
+    this.stageTimer = 0;
+    this.stageManager.advanceStage();
+
+    // Update background speed
+    this.background.setSpeed(this.stageManager.getCurrentSpeed());
+  }
+
+  gameOver() {
+    this.state = 'gameover';
+    console.log('Game Over! Final Score:', this.score);
+  }
+
+  render() {
+    // Clear canvas
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    if (this.state === 'menu') {
+      this.renderMenu();
+    } else if (this.state === 'playing') {
+      this.renderGame();
+    } else if (this.state === 'gameover') {
+      this.renderGameOver();
+    }
+  }
+
+  renderMenu() {
+    // Draw background even in menu
+    this.background.draw(this.ctx);
+
+    // Draw title
+    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+    this.ctx.font = 'bold 48px "Courier New", monospace';
+    this.ctx.textAlign = 'center';
+    this.ctx.fillText('MEXICAT RUNNER', this.canvas.width / 2, 150);
+
+    // Draw a simple cat preview
+    this.ctx.save();
+    this.ctx.translate(this.canvas.width / 2 - 20, 220);
+    this.ctx.scale(2, 2);
+    const previewCat = new Player(0, 0);
+    previewCat.draw(this.ctx);
+    this.ctx.restore();
+
+    // Instructions
+    this.ctx.font = '20px "Courier New", monospace';
+    this.ctx.fillText('Avoid the cactuses!', this.canvas.width / 2, 360);
+    this.ctx.fillText('Collect tacos, tamales & enchiladas!', this.canvas.width / 2, 390);
+
+    this.ctx.font = 'bold 24px "Courier New", monospace';
+    this.ctx.fillText('Press SPACE to Start', this.canvas.width / 2, 450);
+
+    // Controls
+    this.ctx.font = '16px "Courier New", monospace';
+    this.ctx.fillText('Arrow UP: Jump | Arrow DOWN: Duck', this.canvas.width / 2, 500);
+  }
+
+  renderGame() {
+    // Draw in layers: background -> obstacles -> collectibles -> player -> UI
+    this.background.draw(this.ctx);
+
+    this.obstacles.forEach(obstacle => obstacle.draw(this.ctx));
+    this.collectibles.forEach(collectible => collectible.draw(this.ctx));
+
+    this.player.draw(this.ctx);
+
+    this.drawUI();
+  }
+
+  renderGameOver() {
+    // Draw the game state (frozen)
+    this.background.draw(this.ctx);
+    this.obstacles.forEach(obstacle => obstacle.draw(this.ctx));
+    this.collectibles.forEach(collectible => collectible.draw(this.ctx));
+    this.player.draw(this.ctx);
+
+    // Draw semi-transparent overlay
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Game Over text
+    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+    this.ctx.font = 'bold 64px "Courier New", monospace';
+    this.ctx.textAlign = 'center';
+    this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 50);
+
+    // Final score
+    this.ctx.font = 'bold 32px "Courier New", monospace';
+    this.ctx.fillText(`Final Score: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 20);
+
+    // Stage reached
+    this.ctx.font = '24px "Courier New", monospace';
+    this.ctx.fillText(
+      `Stage ${this.stageManager.currentStage} Reached`,
+      this.canvas.width / 2,
+      this.canvas.height / 2 + 60
+    );
+
+    // Restart instruction
+    this.ctx.font = 'bold 24px "Courier New", monospace';
+    this.ctx.fillText('Press SPACE to Restart', this.canvas.width / 2, this.canvas.height / 2 + 120);
+  }
+
+  drawUI() {
+    this.ctx.textAlign = 'left';
+    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+
+    // Score (top right)
+    this.ctx.font = 'bold 24px "Courier New", monospace';
+    this.ctx.textAlign = 'right';
+    this.ctx.fillText(`Score: ${this.score}`, this.canvas.width - 20, 35);
+
+    // Stage (top left)
+    this.ctx.textAlign = 'left';
+    this.ctx.fillText(`Stage ${this.stageManager.currentStage}`, 20, 35);
+
+    // Stage timer (top left, below stage)
+    const timeRemaining = Math.ceil((this.stageDuration - this.stageTimer) / 1000);
+    this.ctx.font = '18px "Courier New", monospace';
+    this.ctx.fillText(`Time: ${timeRemaining}s`, 20, 60);
+
+    // Speed indicator
+    const speedPercent = Math.round(this.stageManager.speedMultiplier * 100);
+    this.ctx.fillText(`Speed: ${speedPercent}%`, 20, 85);
+  }
+}

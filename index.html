@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mexicat Runner - A fun Mexican-themed endless runner game with a cat avoiding cactuses and collecting tacos!">
+  <title>Mexicat Runner</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="game-container">
+    <h1>Mexicat Runner</h1>
+
+    <canvas id="gameCanvas">
+      Your browser does not support the HTML5 canvas element.
+      Please upgrade to a modern browser to play this game.
+    </canvas>
+
+    <div class="instructions">
+      <p><strong>How to Play:</strong></p>
+      <p>🐱 Help the cat avoid cactuses and collect Mexican food!</p>
+      <p><strong>Arrow UP:</strong> Jump | <strong>Arrow DOWN:</strong> Duck</p>
+      <p><strong>SPACE:</strong> Start Game / Restart</p>
+      <p>Each food item gives you <strong>+5 points</strong></p>
+      <p>Survive 2 minutes to advance to the next stage!</p>
+    </div>
+  </div>
+
+  <!-- Load game scripts in correct order -->
+  <script src="js/constants.js"></script>
+  <script src="js/collision.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/obstacle.js"></script>
+  <script src="js/collectible.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/stage.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
