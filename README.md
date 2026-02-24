@@ -4,11 +4,11 @@ A fun Mexican-themed endless runner game where a cat must avoid cactuses while c
 
 ## Game Description
 
-Help Mexicat run through the desert, jumping and ducking to avoid dangerous cactuses while collecting tacos, tamales, and enchiladas. The game gets progressively harder with each 2-minute stage as the speed increases. How long can you survive?
+Help Mexicat navigate through the desert with smooth, Nyan Cat-style movement! Move freely in all directions to avoid dangerous cactuses while collecting tacos, tamales, and enchiladas. The game gets progressively harder with each 2-minute stage as the speed increases. How long can you survive?
 
 ## Features
 
-- **Simple Controls**: Arrow keys to jump and duck
+- **Nyan Cat-Style Movement**: Move freely in all 4 directions with smooth momentum
 - **Progressive Difficulty**: Speed increases every 2 minutes (new stage)
 - **Scoring System**: Collect food items for +5 points each
 - **Three Collectibles**: Tacos, tamales, and enchiladas
@@ -19,16 +19,16 @@ Help Mexicat run through the desert, jumping and ducking to avoid dangerous cact
 
 1. Open `index.html` in your web browser
 2. Press **SPACE** to start the game
-3. Use **Arrow UP** to jump over cactuses
-4. Use **Arrow DOWN** to duck under obstacles
+3. Use **Arrow Keys** to move the cat in all directions (↑↓←→)
+4. Navigate around cactuses and collect Mexican food items
 5. Collect Mexican food items to increase your score
 6. Survive as long as possible!
 
 ### Controls
 
-- **Arrow UP** / **↑**: Jump
-- **Arrow DOWN** / **↓**: Duck
+- **Arrow Keys (↑↓←→)**: Move the cat in all directions with smooth momentum
 - **SPACE**: Start game / Restart after game over
+- **Multiple Keys**: Press multiple arrow keys for diagonal movement!
 
 ## Game Rules
 

@@ -2,6 +2,14 @@
 
 let game;
 
+// Track which keys are currently pressed for simultaneous input
+const keysPressed = {
+  up: false,
+  down: false,
+  left: false,
+  right: false
+};
+
 window.addEventListener('DOMContentLoaded', () => {
   // Get canvas element
   const canvas = document.getElementById('gameCanvas');
@@ -18,6 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
   game = new Game(canvas);
 
   console.log('Mexicat Runner loaded! Press SPACE to start.');
+  console.log('Controls: Arrow keys to move, SPACE to start/restart');
 
   // Keyboard input handling
   document.addEventListener('keydown', handleKeyDown);
@@ -26,7 +35,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function handleKeyDown(e) {
   // Prevent default behavior for arrow keys and space
-  if ([KEYS.UP, KEYS.DOWN, KEYS.SPACE].includes(e.key)) {
+  if ([KEYS.UP, KEYS.DOWN, KEYS.LEFT, KEYS.RIGHT, KEYS.SPACE].includes(e.key)) {
     e.preventDefault();
   }
 
@@ -38,13 +47,19 @@ function handleKeyDown(e) {
     return;
   }
 
-  // Playing state - Controls
+  // Playing state - Track arrow key states
   if (game.state === 'playing') {
     if (e.key === KEYS.UP) {
-      game.player.jump();
+      keysPressed.up = true;
     }
     if (e.key === KEYS.DOWN) {
-      game.player.duck();
+      keysPressed.down = true;
+    }
+    if (e.key === KEYS.LEFT) {
+      keysPressed.left = true;
+    }
+    if (e.key === KEYS.RIGHT) {
+      keysPressed.right = true;
     }
   }
 
@@ -57,8 +72,17 @@ function handleKeyDown(e) {
 function handleKeyUp(e) {
   if (!game) return;
 
-  // Release duck when key is released
-  if (game.state === 'playing' && e.key === KEYS.DOWN) {
-    game.player.standUp();
+  // Release arrow key states
+  if (e.key === KEYS.UP) {
+    keysPressed.up = false;
+  }
+  if (e.key === KEYS.DOWN) {
+    keysPressed.down = false;
+  }
+  if (e.key === KEYS.LEFT) {
+    keysPressed.left = false;
+  }
+  if (e.key === KEYS.RIGHT) {
+    keysPressed.right = false;
   }
 }

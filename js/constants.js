@@ -7,15 +7,17 @@ const GAME_CONFIG = {
 
   // Player settings
   PLAYER_START_X: 100,
-  PLAYER_START_Y: 420,  // Ground level
+  PLAYER_START_Y: 300,  // Center of screen
   PLAYER_WIDTH: 40,
   PLAYER_HEIGHT: 40,
-  PLAYER_DUCK_HEIGHT: 20,
 
-  // Physics
-  GRAVITY: 0.5,
-  JUMP_POWER: -12,
-  GROUND_Y: 420,  // Where the player stands
+  // Player movement (Nyan Cat style)
+  PLAYER_ACCELERATION: 0.6,
+  PLAYER_MAX_SPEED: 6,
+  PLAYER_FRICTION: 0.85,
+
+  // Visual ground level (cat floats freely above it)
+  GROUND_Y: 450,
 
   // Game settings
   STAGE_DURATION: 120000,  // 2 minutes in milliseconds
@@ -44,5 +46,7 @@ const GAME_CONFIG = {
 const KEYS = {
   UP: 'ArrowUp',
   DOWN: 'ArrowDown',
+  LEFT: 'ArrowLeft',
+  RIGHT: 'ArrowRight',
   SPACE: ' '
 };

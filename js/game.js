@@ -93,6 +93,12 @@ class Game {
       this.advanceStage();
     }
 
+    // Handle player movement based on key states
+    if (keysPressed.up) this.player.moveUp();
+    if (keysPressed.down) this.player.moveDown();
+    if (keysPressed.left) this.player.moveLeft();
+    if (keysPressed.right) this.player.moveRight();
+
     // Update all entities
     this.player.update(deltaTime);
     this.background.update(deltaTime);
@@ -249,7 +255,7 @@ class Game {
 
     // Controls
     this.ctx.font = '16px "Courier New", monospace';
-    this.ctx.fillText('Arrow UP: Jump | Arrow DOWN: Duck', this.canvas.width / 2, 500);
+    this.ctx.fillText('Arrow Keys: Move in all directions', this.canvas.width / 2, 500);
   }
 
   renderGame() {
