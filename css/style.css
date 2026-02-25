@@ -8,13 +8,12 @@
 
 body {
   font-family: 'Courier New', 'Courier', monospace;
-  background-color: #f5f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(to bottom, #e0e0e0 0%, #f5f5f5 100%);
+  background: url('../nacho-libre.jpeg') left center / auto 100% no-repeat fixed;
 }
 
 .game-container {
