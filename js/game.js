@@ -17,6 +17,9 @@ class Game {
     this.obstacleTimer = 0;
     this.collectibleTimer = 0;
 
+    // Taco celebration text
+    this.tacoText = null; // { text, scale, opacity, timer }
+
     // Entity collections
     this.player = null;
     this.obstacles = [];
@@ -109,6 +112,16 @@ class Game {
     // Check collisions
     this.checkCollisions();
 
+    // Update taco celebration text
+    if (this.tacoText) {
+      this.tacoText.timer += deltaTime;
+      const duration = 900; // ms
+      const progress = this.tacoText.timer / duration;
+      this.tacoText.scale = 1 + progress * 1.5;
+      this.tacoText.opacity = 1 - progress;
+      if (progress >= 1) this.tacoText = null;
+    }
+
     // Spawn new entities
     this.spawnEntities(deltaTime);
   }
@@ -150,6 +163,18 @@ class Game {
         if (checkCollision(playerBounds, collectibleBounds)) {
           collectible.collected = true;
           this.score += collectible.points;
+          if (collectible.type === 'taco') {
+            const expressions = [
+              '¡Delicioso!', '¡Qué rico!', '¡Sabroso!',
+              '¡Ay, qué bueno!', '¡Híjole!', '¡Qué sabor!'
+            ];
+            this.tacoText = {
+              text: expressions[Math.floor(Math.random() * expressions.length)],
+              scale: 1,
+              opacity: 1,
+              timer: 0
+            };
+          }
         }
       }
     }
@@ -281,6 +306,8 @@ class Game {
 
     this.player.draw(this.ctx);
 
+    if (this.tacoText) this.drawTacoText();
+
     this.drawUI();
   }
 
@@ -316,6 +343,25 @@ class Game {
     // Restart instruction
     this.ctx.font = 'bold 24px "Courier New", monospace';
     this.ctx.fillText('Press SPACE to Restart', this.canvas.width / 2, this.canvas.height / 2 + 120);
+  }
+
+  drawTacoText() {
+    const ctx = this.ctx;
+    const cx = this.canvas.width / 2;
+    const cy = this.canvas.height / 2;
+    ctx.save();
+    ctx.globalAlpha = this.tacoText.opacity;
+    ctx.translate(cx, cy);
+    ctx.scale(this.tacoText.scale, this.tacoText.scale);
+    ctx.font = 'bold 48px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = GAME_CONFIG.COLOR_TACO_YELLOW;
+    ctx.strokeStyle = GAME_CONFIG.COLOR_BLACK;
+    ctx.lineWidth = 3;
+    ctx.strokeText(this.tacoText.text, 0, 0);
+    ctx.fillText(this.tacoText.text, 0, 0);
+    ctx.restore();
   }
 
   drawUI() {

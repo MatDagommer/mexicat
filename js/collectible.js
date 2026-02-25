@@ -1,5 +1,9 @@
 // Collectible (Food) Class
 
+// Load taco sprite once, shared across all instances
+const tacoSprite = new Image();
+tacoSprite.src = 'taco.png';
+
 class Collectible {
   constructor(x, y, type, speed) {
     this.x = x;
@@ -45,69 +49,8 @@ class Collectible {
   }
 
   drawTaco(ctx, cx, cy) {
-    // Taco shell (half circle / U shape)
-    ctx.strokeStyle = GAME_CONFIG.COLOR_BLACK;
-    ctx.lineWidth = 2.5;
-    ctx.fillStyle = GAME_CONFIG.COLOR_TACO_YELLOW;
-
-    // Shell shape
-    ctx.beginPath();
-    ctx.arc(cx, cy + 2, 14, Math.PI, 0, false);
-    ctx.fill();
-    ctx.stroke();
-
-    // Inner shell line
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(cx, cy + 2, 11, Math.PI * 1.1, -Math.PI * 0.1, false);
-    ctx.stroke();
-
-    // Filling - lettuce (wavy line at top)
-    ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
-    ctx.beginPath();
-    ctx.moveTo(cx - 12, cy + 1);
-    ctx.quadraticCurveTo(cx - 8, cy - 6, cx - 4, cy);
-    ctx.quadraticCurveTo(cx, cy - 7, cx + 4, cy - 1);
-    ctx.quadraticCurveTo(cx + 8, cy - 7, cx + 12, cy + 1);
-    ctx.lineTo(cx + 10, cy + 2);
-    ctx.quadraticCurveTo(cx + 6, cy - 3, cx + 3, cy + 2);
-    ctx.quadraticCurveTo(cx, cy - 3, cx - 3, cy + 2);
-    ctx.quadraticCurveTo(cx - 7, cy - 3, cx - 10, cy + 2);
-    ctx.closePath();
-    ctx.fill();
-
-    // Filling - meat strips
-    ctx.strokeStyle = GAME_CONFIG.COLOR_BLACK;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(cx - 6, cy + 4);
-    ctx.lineTo(cx - 4, cy + 8);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(cx, cy + 3);
-    ctx.lineTo(cx + 1, cy + 9);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(cx + 5, cy + 4);
-    ctx.lineTo(cx + 4, cy + 8);
-    ctx.stroke();
-
-    // Cheese drip
-    ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
-    ctx.beginPath();
-    ctx.moveTo(cx - 2, cy + 2);
-    ctx.quadraticCurveTo(cx - 3, cy + 6, cx - 1, cy + 7);
-    ctx.quadraticCurveTo(cx + 1, cy + 6, cx + 1, cy + 2);
-    ctx.fill();
-
-    // Shell texture dots
-    ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
-    ctx.beginPath();
-    ctx.arc(cx - 7, cy + 10, 0.8, 0, Math.PI * 2);
-    ctx.arc(cx + 2, cy + 12, 0.8, 0, Math.PI * 2);
-    ctx.arc(cx + 8, cy + 9, 0.8, 0, Math.PI * 2);
-    ctx.arc(cx - 3, cy + 14, 0.8, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(tacoSprite, cx - this.width / 2, cy - this.height / 2, this.width, this.height);
   }
 
   drawTamale(ctx, cx, cy) {

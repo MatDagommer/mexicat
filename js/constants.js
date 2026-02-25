@@ -12,8 +12,8 @@ const GAME_CONFIG = {
   PLAYER_HEIGHT: 40,
 
   // Player movement (Nyan Cat style)
-  PLAYER_ACCELERATION: 0.6,
-  PLAYER_MAX_SPEED: 6,
+  PLAYER_ACCELERATION: 1.2,
+  PLAYER_MAX_SPEED: 10,
   PLAYER_FRICTION: 0.85,
 
   // Game settings
@@ -30,7 +30,7 @@ const GAME_CONFIG = {
   COLLECTIBLE_POINTS: 5,
 
   // Collectible types
-  COLLECTIBLE_TYPES: ['taco', 'tamale', 'enchilada'],
+  COLLECTIBLE_TYPES: ['taco'],
 
   // Colors (Black & White theme)
   COLOR_BLACK: '#000000',
