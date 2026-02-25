@@ -4,15 +4,18 @@
 const playerSprites = {
   frame1: new Image(),
   frame2: new Image(),
+  dead: new Image(),
   loaded: false
 };
 playerSprites.frame1.src = 'assets/mexicat-1.png';
 playerSprites.frame2.src = 'assets/mexicat-2.png';
+playerSprites.dead.src = 'assets/dead-cat.png';
 
-// Check when both frames are loaded
+// Check when all frames are loaded
 Promise.all([
   new Promise(resolve => playerSprites.frame1.onload = resolve),
-  new Promise(resolve => playerSprites.frame2.onload = resolve)
+  new Promise(resolve => playerSprites.frame2.onload = resolve),
+  new Promise(resolve => playerSprites.dead.onload = resolve),
 ]).then(() => {
   playerSprites.loaded = true;
 });
@@ -89,20 +92,15 @@ class Player {
     this.velocityX += this.acceleration * (deltaTime / 16);
   }
 
-  draw(ctx) {
+  draw(ctx, dead = false) {
     if (playerSprites.loaded) {
-      // Select current animation frame
-      const currentFrame = this.animationFrame === 0 ? playerSprites.frame1 : playerSprites.frame2;
-
-      // Render the PNG sprite, preserving pixel art crispness
+      const frame = dead ? playerSprites.dead
+                         : (this.animationFrame === 0 ? playerSprites.frame1 : playerSprites.frame2);
       ctx.imageSmoothingEnabled = false;
       ctx.save();
-
-      ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
-
+      ctx.drawImage(frame, this.x, this.y, this.width, this.height);
       ctx.restore();
     } else {
-      // Fallback while images load
       ctx.fillStyle = GAME_CONFIG.COLOR_CAT_BODY;
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }

@@ -186,7 +186,7 @@ class Game {
             const picked = expressions[Math.floor(Math.random() * expressions.length)];
             this.tacoText = { text: picked.text, scale: 1, opacity: 1, timer: 0 };
             const sfx = new Audio(picked.audio);
-            sfx.volume = 0.35;
+            sfx.volume = 0.4;
             sfx.play();
           }
         }
@@ -333,7 +333,7 @@ class Game {
     this.background.draw(this.ctx);
     this.obstacles.forEach(obstacle => obstacle.draw(this.ctx));
     this.collectibles.forEach(collectible => collectible.draw(this.ctx));
-    this.player.draw(this.ctx);
+    this.player.draw(this.ctx, true);
 
     // Draw semi-transparent overlay
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
