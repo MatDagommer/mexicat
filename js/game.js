@@ -293,6 +293,12 @@ class Game {
     // Draw Star Wars-style perspective title
     this.drawStarWarsTitle(this.ctx, 'MEXICAT', this.canvas.width / 2, 60);
 
+    // Subtitle
+    this.ctx.font = '13px "Courier New", monospace';
+    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+    this.ctx.textAlign = 'center';
+    this.ctx.fillText('Created by MatDagommer', this.canvas.width / 2, 175);
+
     // Draw a simple cat preview
     this.ctx.save();
     this.ctx.translate(this.canvas.width / 2 - 20, 220);
