@@ -8,7 +8,7 @@ const GAME_CONFIG = {
   // Player settings
   PLAYER_START_X: 100,
   PLAYER_START_Y: 300,  // Center of screen
-  PLAYER_WIDTH: 50,
+  PLAYER_WIDTH: 60,
   PLAYER_HEIGHT: 40,
 
   // Player movement (Nyan Cat style)

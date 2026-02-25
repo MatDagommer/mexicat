@@ -240,6 +240,8 @@ class Game {
   gameOver() {
     this.state = 'gameover';
     this.music.pause();
+    const meaow = new Audio('assets/meaow.m4a');
+    meaow.play();
     this.gameOverMusic.currentTime = 0;
     this.gameOverMusic.play();
     console.log('Game Over! Final Score:', this.score);
