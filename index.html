@@ -12,10 +12,20 @@
     <h1>Mexicat</h1>
     <p class="subtitle">Created by MatDagommer</p>
 
-    <canvas id="gameCanvas">
-      Your browser does not support the HTML5 canvas element.
-      Please upgrade to a modern browser to play this game.
-    </canvas>
+    <div id="canvas-wrapper">
+      <canvas id="gameCanvas">
+        Your browser does not support the HTML5 canvas element.
+        Please upgrade to a modern browser to play this game.
+      </canvas>
+      <div id="name-overlay" class="name-overlay hidden">
+        <p class="overlay-title">Save your score!</p>
+        <input type="text" id="player-name" maxlength="20" placeholder="Your name..." autocomplete="off">
+        <div class="overlay-buttons">
+          <button id="submit-score-btn">Submit</button>
+          <button id="skip-score-btn">Skip</button>
+        </div>
+      </div>
+    </div>
 
     <div class="instructions">
       <p><strong>How to Play:</strong></p>
@@ -28,6 +38,7 @@
   </div>
 
   <!-- Load game scripts in correct order -->
+  <script src="js/leaderboard.js"></script>
   <script src="js/constants.js"></script>
   <script src="js/collision.js"></script>
   <script src="js/player.js"></script>

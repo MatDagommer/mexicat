@@ -31,11 +31,30 @@ window.addEventListener('DOMContentLoaded', () => {
   // Keyboard input handling
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
+
+  // Name entry overlay events
+  const nameInput = document.getElementById('player-name');
+  nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      game.showLeaderboard(nameInput.value);
+    }
+  });
+
+  document.getElementById('submit-score-btn').addEventListener('click', () => {
+    game.showLeaderboard(nameInput.value);
+  });
+
+  document.getElementById('skip-score-btn').addEventListener('click', () => {
+    game.showLeaderboard(null);
+  });
 });
 
 function handleKeyDown(e) {
-  // Prevent default behavior for arrow keys and space
-  if ([KEYS.UP, KEYS.DOWN, KEYS.LEFT, KEYS.RIGHT, KEYS.SPACE].includes(e.key)) {
+  // Don't intercept keys when the name input has focus
+  const nameInputFocused = document.activeElement === document.getElementById('player-name');
+
+  if (!nameInputFocused && [KEYS.UP, KEYS.DOWN, KEYS.LEFT, KEYS.RIGHT, KEYS.SPACE].includes(e.key)) {
     e.preventDefault();
   }
 
@@ -49,22 +68,14 @@ function handleKeyDown(e) {
 
   // Playing state - Track arrow key states
   if (game.state === 'playing') {
-    if (e.key === KEYS.UP) {
-      keysPressed.up = true;
-    }
-    if (e.key === KEYS.DOWN) {
-      keysPressed.down = true;
-    }
-    if (e.key === KEYS.LEFT) {
-      keysPressed.left = true;
-    }
-    if (e.key === KEYS.RIGHT) {
-      keysPressed.right = true;
-    }
+    if (e.key === KEYS.UP) keysPressed.up = true;
+    if (e.key === KEYS.DOWN) keysPressed.down = true;
+    if (e.key === KEYS.LEFT) keysPressed.left = true;
+    if (e.key === KEYS.RIGHT) keysPressed.right = true;
   }
 
-  // Game over state - Restart
-  if (game.state === 'gameover' && e.key === KEYS.SPACE) {
+  // Leaderboard state - Play again
+  if (game.state === 'leaderboard' && e.key === KEYS.SPACE) {
     game.restart();
   }
 }

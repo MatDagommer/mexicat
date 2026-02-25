@@ -20,6 +20,10 @@ class Game {
     // Taco celebration text
     this.tacoText = null; // { text, scale, opacity, timer }
 
+    // Leaderboard
+    this.topScores = [];
+    this.leaderboardLoading = false;
+
     // Music
     this.music = new Audio('assets/mariachi-music.mp3');
     this.music.loop = true;
@@ -84,6 +88,7 @@ class Game {
 
   restart() {
     this.gameOverMusic.pause();
+    document.getElementById('name-overlay').classList.add('hidden');
     this.state = 'menu';
     this.start();
   }
@@ -244,7 +249,34 @@ class Game {
     meaow.play();
     this.gameOverMusic.currentTime = 0;
     this.gameOverMusic.play();
-    console.log('Game Over! Final Score:', this.score);
+
+    const overlay = document.getElementById('name-overlay');
+    overlay.classList.remove('hidden');
+    const input = document.getElementById('player-name');
+    input.value = '';
+    input.focus();
+  }
+
+  async showLeaderboard(name) {
+    if (name && name.trim()) {
+      try {
+        await submitScore(name.trim(), this.score);
+      } catch (e) {
+        console.error('Failed to submit score:', e);
+      }
+    }
+
+    document.getElementById('name-overlay').classList.add('hidden');
+    this.state = 'leaderboard';
+    this.leaderboardLoading = true;
+    this.topScores = [];
+
+    try {
+      this.topScores = await fetchTopScores(10);
+    } catch (e) {
+      console.error('Failed to fetch scores:', e);
+    }
+    this.leaderboardLoading = false;
   }
 
   render() {
@@ -257,6 +289,8 @@ class Game {
       this.renderGame();
     } else if (this.state === 'gameover') {
       this.renderGameOver();
+    } else if (this.state === 'leaderboard') {
+      this.renderLeaderboard();
     }
   }
 
@@ -364,10 +398,41 @@ class Game {
       this.canvas.width / 2,
       this.canvas.height / 2 + 60
     );
+  }
 
-    // Restart instruction
-    this.ctx.font = 'bold 24px "Courier New", monospace';
-    this.ctx.fillText('Press SPACE to Restart', this.canvas.width / 2, this.canvas.height / 2 + 120);
+  renderLeaderboard() {
+    this.background.draw(this.ctx);
+
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+    this.ctx.textAlign = 'center';
+
+    this.ctx.font = 'bold 48px "Courier New", monospace';
+    this.ctx.fillText('LEADERBOARD', this.canvas.width / 2, 70);
+
+    if (this.leaderboardLoading) {
+      this.ctx.font = '24px "Courier New", monospace';
+      this.ctx.fillText('Loading...', this.canvas.width / 2, this.canvas.height / 2);
+    } else if (this.topScores.length === 0) {
+      this.ctx.font = '22px "Courier New", monospace';
+      this.ctx.fillText('No scores yet!', this.canvas.width / 2, this.canvas.height / 2);
+    } else {
+      this.ctx.font = '22px "Courier New", monospace';
+      this.topScores.forEach((entry, i) => {
+        const y = 120 + i * 42;
+        const name = entry.name.length > 16 ? entry.name.slice(0, 16) + '…' : entry.name;
+        this.ctx.textAlign = 'left';
+        this.ctx.fillText(`${i + 1}. ${name}`, 160, y);
+        this.ctx.textAlign = 'right';
+        this.ctx.fillText(`${entry.score}`, 640, y);
+      });
+    }
+
+    this.ctx.textAlign = 'center';
+    this.ctx.font = 'bold 22px "Courier New", monospace';
+    this.ctx.fillText('Press SPACE to Play Again', this.canvas.width / 2, this.canvas.height - 40);
   }
 
   drawTacoText() {
