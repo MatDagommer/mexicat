@@ -186,7 +186,7 @@ class Game {
             const picked = expressions[Math.floor(Math.random() * expressions.length)];
             this.tacoText = { text: picked.text, scale: 1, opacity: 1, timer: 0 };
             const sfx = new Audio(picked.audio);
-            sfx.volume = 0.4;
+            sfx.volume = 0.5;
             sfx.play();
           }
         }
