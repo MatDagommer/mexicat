@@ -2,7 +2,7 @@
 
 // Load taco sprite once, shared across all instances
 const tacoSprite = new Image();
-tacoSprite.src = 'taco.png';
+tacoSprite.src = 'assets/taco.png';
 
 class Collectible {
   constructor(x, y, type, speed) {

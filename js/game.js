@@ -21,9 +21,9 @@ class Game {
     this.tacoText = null; // { text, scale, opacity, timer }
 
     // Music
-    this.music = new Audio('mariachi-music.mp3');
+    this.music = new Audio('assets/mariachi-music.mp3');
     this.music.loop = true;
-    this.gameOverMusic = new Audio('game-over-music.mp3');
+    this.gameOverMusic = new Audio('assets/game-over-music.mp3');
 
     // Entity collections
     this.player = null;

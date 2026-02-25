@@ -6,8 +6,8 @@ const playerSprites = {
   frame2: new Image(),
   loaded: false
 };
-playerSprites.frame1.src = 'mexicat-1.png';
-playerSprites.frame2.src = 'mexicat-2.png';
+playerSprites.frame1.src = 'assets/mexicat-1.png';
+playerSprites.frame2.src = 'assets/mexicat-2.png';
 
 // Check when both frames are loaded
 Promise.all([

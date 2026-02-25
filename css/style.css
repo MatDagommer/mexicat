@@ -13,7 +13,7 @@ body {
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background: url('../background.png') center / cover no-repeat fixed;
+  background: url('../assets/background.png') center / cover no-repeat fixed;
 }
 
 .game-container {
