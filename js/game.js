@@ -23,7 +23,9 @@ class Game {
     // Music
     this.music = new Audio('assets/mariachi-music.mp3');
     this.music.loop = true;
+    this.music.volume = 0.5;
     this.gameOverMusic = new Audio('assets/game-over-music.mp3');
+    this.gameOverMusic.volume = 0.5;
 
     // Entity collections
     this.player = null;
@@ -174,15 +176,18 @@ class Game {
           this.score += collectible.points;
           if (collectible.type === 'taco') {
             const expressions = [
-              '¡Delicioso!', '¡Qué rico!', '¡Sabroso!',
-              '¡Ay, qué bueno!', '¡Híjole!', '¡Qué sabor!'
+              { text: '¡Delicioso!',    audio: 'assets/Delicioso.m4a' },
+              { text: '¡Qué rico!',     audio: 'assets/Que rico.m4a' },
+              { text: '¡Sabroso!',      audio: 'assets/Sabroso.m4a' },
+              { text: '¡Ay, qué bueno!',audio: 'assets/Ay que bueno.m4a' },
+              { text: '¡Híjole!',       audio: 'assets/Hijole.m4a' },
+              { text: '¡Qué sabor!',    audio: 'assets/Que sabor.m4a' },
             ];
-            this.tacoText = {
-              text: expressions[Math.floor(Math.random() * expressions.length)],
-              scale: 1,
-              opacity: 1,
-              timer: 0
-            };
+            const picked = expressions[Math.floor(Math.random() * expressions.length)];
+            this.tacoText = { text: picked.text, scale: 1, opacity: 1, timer: 0 };
+            const sfx = new Audio(picked.audio);
+            sfx.volume = 0.35;
+            sfx.play();
           }
         }
       }
