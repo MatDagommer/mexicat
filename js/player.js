@@ -38,17 +38,19 @@ class Player {
   }
 
   update(deltaTime) {
+    const dt = deltaTime / 16;
+
     // Apply friction (deceleration when no input)
-    this.velocityX *= this.friction;
-    this.velocityY *= this.friction;
+    this.velocityX *= Math.pow(this.friction, dt);
+    this.velocityY *= Math.pow(this.friction, dt);
 
     // Clamp velocity to max speed
     this.velocityX = Math.max(-this.maxSpeed, Math.min(this.maxSpeed, this.velocityX));
     this.velocityY = Math.max(-this.maxSpeed, Math.min(this.maxSpeed, this.velocityY));
 
     // Update position
-    this.x += this.velocityX;
-    this.y += this.velocityY;
+    this.x += this.velocityX * dt;
+    this.y += this.velocityY * dt;
 
     // Keep within canvas boundaries
     this.x = Math.max(0, Math.min(GAME_CONFIG.CANVAS_WIDTH - this.width, this.x));
@@ -71,20 +73,20 @@ class Player {
   }
 
   // Movement methods (called from input handler)
-  moveUp() {
-    this.velocityY -= this.acceleration;
+  moveUp(deltaTime) {
+    this.velocityY -= this.acceleration * (deltaTime / 16);
   }
 
-  moveDown() {
-    this.velocityY += this.acceleration;
+  moveDown(deltaTime) {
+    this.velocityY += this.acceleration * (deltaTime / 16);
   }
 
-  moveLeft() {
-    this.velocityX -= this.acceleration;
+  moveLeft(deltaTime) {
+    this.velocityX -= this.acceleration * (deltaTime / 16);
   }
 
-  moveRight() {
-    this.velocityX += this.acceleration;
+  moveRight(deltaTime) {
+    this.velocityX += this.acceleration * (deltaTime / 16);
   }
 
   draw(ctx) {

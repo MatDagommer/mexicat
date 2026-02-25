@@ -106,10 +106,10 @@ class Game {
     }
 
     // Handle player movement based on key states
-    if (keysPressed.up) this.player.moveUp();
-    if (keysPressed.down) this.player.moveDown();
-    if (keysPressed.left) this.player.moveLeft();
-    if (keysPressed.right) this.player.moveRight();
+    if (keysPressed.up) this.player.moveUp(deltaTime);
+    if (keysPressed.down) this.player.moveDown(deltaTime);
+    if (keysPressed.left) this.player.moveLeft(deltaTime);
+    if (keysPressed.right) this.player.moveRight(deltaTime);
 
     // Update all entities
     this.player.update(deltaTime);
