@@ -6,8 +6,8 @@ const playerSprites = {
   frame2: new Image(),
   loaded: false
 };
-playerSprites.frame1.src = 'mexicat-frame1.png';
-playerSprites.frame2.src = 'mexicat-frame2.png';
+playerSprites.frame1.src = 'mexicat-1.png';
+playerSprites.frame2.src = 'mexicat-2.png';
 
 // Check when both frames are loaded
 Promise.all([
@@ -96,13 +96,7 @@ class Player {
       ctx.imageSmoothingEnabled = false;
       ctx.save();
 
-      // Draw the sprite first
       ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
-
-      // Apply gray/blue tint while preserving black contours
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.fillStyle = GAME_CONFIG.COLOR_CAT_BODY;
-      ctx.fillRect(this.x, this.y, this.width, this.height);
 
       ctx.restore();
     } else {

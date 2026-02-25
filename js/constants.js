@@ -17,7 +17,7 @@ const GAME_CONFIG = {
   PLAYER_FRICTION: 0.85,
 
   // Game settings
-  STAGE_DURATION: 120000,  // 2 minutes in milliseconds
+  STAGE_DURATION: 20000,  // 20 seconds in milliseconds
   BASE_SPEED: 5,
   SPEED_INCREMENT: 0.25,
 
