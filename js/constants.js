@@ -1,5 +1,7 @@
 // Game Configuration Constants
 
+const APP_VERSION = "0.1.0";
+
 const GAME_CONFIG = {
   // Canvas dimensions
   CANVAS_WIDTH: 800,

@@ -10,7 +10,7 @@
 <body>
   <div class="game-container">
     <h1>Mexicat</h1>
-    <p class="subtitle">Created by MatDagommer</p>
+    <p class="subtitle">Created by MatDagommer · <span id="app-version"></span></p>
 
     <div id="canvas-wrapper">
       <canvas id="gameCanvas">
@@ -48,5 +48,8 @@
   <script src="js/stage.js"></script>
   <script src="js/game.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    document.getElementById('app-version').textContent = 'v' + APP_VERSION;
+  </script>
 </body>
 </html>

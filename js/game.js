@@ -333,7 +333,7 @@ class Game {
     this.ctx.font = '13px "Courier New", monospace';
     this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
     this.ctx.textAlign = 'center';
-    this.ctx.fillText('Created by MatDagommer', this.canvas.width / 2, 175);
+    this.ctx.fillText(`Created by MatDagommer · v${APP_VERSION}`, this.canvas.width / 2, 175);
 
     // Draw a simple cat preview
     this.ctx.save();

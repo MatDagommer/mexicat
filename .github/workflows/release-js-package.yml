@@ -32,23 +32,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump version
-        id: version
-        run: |
-          NEW_VERSION=$(npm version ${{ inputs.bump }} --no-git-tag-version)
-          echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Install dependencies
+        run: npm install
 
-      - name: Commit and tag
-        run: |
-          git add package.json
-          git commit -m "chore(release): ${{ steps.version.outputs.version }}"
-          git tag ${{ steps.version.outputs.version }}
-
-      - name: Push
-        run: git push && git push --tags
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          generate_release_notes: true
+      - name: Release
+        run: npx release-it --ci --increment ${{ inputs.bump }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
