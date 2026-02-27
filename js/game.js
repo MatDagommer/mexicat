@@ -24,6 +24,10 @@ class Game {
     this.topScores = [];
     this.leaderboardLoading = false;
 
+    // Anomaly detection
+    this.startTime = null;
+    this.gameOverTime = null;
+
     // Music
     this.music = new Audio('assets/mariachi-music.mp3');
     this.music.loop = true;
@@ -80,6 +84,9 @@ class Game {
         this.canvas.height,
         this.stageManager.getCurrentSpeed()
       );
+
+      this.startTime = Date.now();
+      this.gameOverTime = null;
 
       this.music.currentTime = 0;
       this.music.play();
@@ -244,6 +251,7 @@ class Game {
 
   gameOver() {
     this.state = 'gameover';
+    this.gameOverTime = Date.now();
     this.music.pause();
     const meaow = new Audio('assets/meaow.m4a');
     meaow.play();
@@ -259,10 +267,23 @@ class Game {
 
   async showLeaderboard(name) {
     if (name && name.trim()) {
-      try {
-        await submitScore(name.trim(), this.score);
-      } catch (e) {
-        console.error('Failed to submit score:', e);
+      const elapsed = (this.startTime && this.gameOverTime)
+        ? this.gameOverTime - this.startTime
+        : 0;
+      const maxPossible = computeMaxPossibleScore(this.stageManager.currentStage, elapsed);
+      const TOLERANCE = 1.1;
+
+      if (elapsed > 0 && this.score > maxPossible * TOLERANCE) {
+        console.warn(
+          `[Anomaly] Score ${this.score} rejected ` +
+          `(max expected: ${maxPossible}, elapsed: ${elapsed}ms, stage: ${this.stageManager.currentStage})`
+        );
+      } else {
+        try {
+          await submitScore(name.trim(), this.score);
+        } catch (e) {
+          console.error('Failed to submit score:', e);
+        }
       }
     }
 
