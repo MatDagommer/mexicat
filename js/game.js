@@ -371,21 +371,17 @@ class Game {
     // Draw Star Wars-style perspective title
     this.drawStarWarsTitle(this.ctx, 'MEXICAT', this.canvas.width / 2, 60);
 
-    // Subtitle
-    this.ctx.font = '13px "Courier New", monospace';
-    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
-    this.ctx.textAlign = 'center';
-    this.ctx.fillText(`Created by MatDagommer · v${APP_VERSION}`, this.canvas.width / 2, 175);
-
     // Draw a simple cat preview
     this.ctx.save();
-    this.ctx.translate(this.canvas.width / 2 - 20, 220);
-    this.ctx.scale(2, 2);
+    this.ctx.translate(this.canvas.width / 2 - 90, 175);
+    this.ctx.scale(3, 3);
     const previewCat = new Player(0, 0);
     previewCat.draw(this.ctx);
     this.ctx.restore();
 
     // Instructions
+    this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
+    this.ctx.textAlign = 'center';
     this.ctx.font = '20px "Courier New", monospace';
     this.ctx.fillText('Avoid the cactuses!', this.canvas.width / 2, 360);
     this.ctx.fillText('Collect tacos, tamales & enchiladas!', this.canvas.width / 2, 390);
