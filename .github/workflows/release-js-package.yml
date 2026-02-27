@@ -3,39 +3,130 @@ name: Release JS Package
 on:
   workflow_dispatch:
     inputs:
-      bump:
-        description: "Version bump type"
+      version_name:
+        description: "One of major, minor, or patch"
         required: true
-        default: patch
         type: choice
         options:
-          - patch
-          - minor
           - major
+          - minor
+          - patch
+        default: patch
+  pull_request:
+    branches:
+      - '**'
+
+permissions:
+  contents: write
+  id-token: write
+
+env:
+  DEFAULT_VERSION_NAME: patch
 
 jobs:
-  release:
+  deploy-package:
     runs-on: ubuntu-latest
+    name: ${{ github.event_name == 'pull_request' && '(Dry Run) ' || '' }}Release JS Package
     permissions:
+      id-token: write
       contents: write
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
-      - uses: actions/setup-node@v4
+      - name: Setup Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-
-      - name: Configure git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Release
-        run: npx release-it --ci --increment ${{ inputs.bump }}
+      - name: Set version name
+        run: echo "VERSION_NAME=${{ github.event.inputs.version_name || env.DEFAULT_VERSION_NAME }}" >> $GITHUB_ENV
+
+      - name: Show new version
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          echo "new_version=$(npx semver $CURRENT -i ${{ env.VERSION_NAME }})"
+
+      - name: Store new version number
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          echo "version_number=$(npx semver $CURRENT -i ${{ env.VERSION_NAME }})" >> $GITHUB_ENV
+
+      - name: Display new version number
+        run: |
+          echo "version_name: ${{ env.VERSION_NAME }}"
+          echo "version_number: v${{ env.version_number }}"
+
+      - name: Ensure repo status is clean
+        run: git status
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Run release-it (dry run)
+        if: github.event_name == 'pull_request'
+        run: npx release-it --ci --dry-run --increment ${{ env.VERSION_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run release-it
+        if: github.event_name != 'pull_request'
+        run: npx release-it --ci --no-git.push --no-github.release --increment ${{ env.VERSION_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ensure tag creation
+        if: github.event_name != 'pull_request'
+        run: git tag | grep ${{ env.version_number }}
+
+      - name: Write release notes
+        if: github.event_name != 'pull_request'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          uv tool install llamabot[cli] --python 3.12 --python-preference only-managed --force
+          llamabot configure default-model --model-name="${{ secrets.DEFAULT_LANGUAGE_MODEL }}"
+          llamabot git write-release-notes
+
+      - name: Commit release notes
+        if: github.event_name != 'pull_request'
+        run: |
+          git add .
+          git commit -m "Add release notes for ${{ env.version_number }}"
+
+      - name: Push changes with tags
+        if: github.event_name != 'pull_request'
+        run: git push && git push --tags
+
+      - name: Create release in GitHub repo
+        if: github.event_name != 'pull_request'
+        uses: ncipollo/release-action@v1
+        with:
+          bodyFile: "docs/releases/v${{ env.version_number }}.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ env.version_number }}
+
+      - name: Ensure complete
+        if: github.event_name != 'pull_request'
+        run: echo "Auto-release complete!"
