@@ -177,6 +177,65 @@ canvas {
   color: #fff;
 }
 
+/* Patch note modal */
+.patch-note-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.patch-note-overlay.hidden {
+  display: none;
+}
+
+.patch-note-modal {
+  background: #fff;
+  border: 3px solid #000;
+  border-radius: 8px;
+  padding: 32px 40px;
+  font-family: 'Courier New', monospace;
+  max-width: 460px;
+  width: 90%;
+  text-align: center;
+}
+
+.patch-note-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.patch-note-list {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 24px;
+  line-height: 2;
+  font-size: 0.95rem;
+}
+
+.patch-note-modal button {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 8px 28px;
+  border: 2px solid #000;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #000;
+  color: #fff;
+  transition: background 0.15s, color 0.15s;
+}
+
+.patch-note-modal button:hover {
+  background: #fff;
+  color: #000;
+}
+
 /* Fun hover effect on canvas */
 canvas:hover {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);

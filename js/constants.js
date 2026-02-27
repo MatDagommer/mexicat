@@ -2,6 +2,10 @@
 
 const APP_VERSION = "0.1.1";
 
+// Patch note popup: shown to users who haven't dismissed it yet, until this timestamp.
+// Set to release date + 48h (epoch ms). Set to 0 to disable.
+const PATCH_NOTE_EXPIRY = new Date('2026-02-28T12:00:00Z').getTime();
+
 const GAME_CONFIG = {
   // Canvas dimensions
   CANVAS_WIDTH: 800,

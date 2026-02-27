@@ -10,6 +10,15 @@ const keysPressed = {
   right: false
 };
 
+function isPatchNoteVisible() {
+  return !document.getElementById('patch-note-overlay').classList.contains('hidden');
+}
+
+function dismissPatchNote() {
+  localStorage.setItem('seenPatchNote_' + APP_VERSION, '1');
+  document.getElementById('patch-note-overlay').classList.add('hidden');
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   // Get canvas element
   const canvas = document.getElementById('gameCanvas');
@@ -27,6 +36,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   console.log('Mexicat Runner loaded! Press SPACE to start.');
   console.log('Controls: Arrow keys to move, SPACE to start/restart');
+
+  // Patch note popup
+  document.getElementById('patch-note-version').textContent = APP_VERSION;
+  const seenKey = 'seenPatchNote_' + APP_VERSION;
+  if (PATCH_NOTE_EXPIRY > 0 && Date.now() < PATCH_NOTE_EXPIRY && !localStorage.getItem(seenKey)) {
+    document.getElementById('patch-note-overlay').classList.remove('hidden');
+  }
+  document.getElementById('patch-note-dismiss').addEventListener('click', dismissPatchNote);
 
   // Keyboard input handling
   document.addEventListener('keydown', handleKeyDown);
@@ -51,6 +68,15 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function handleKeyDown(e) {
+  // Dismiss patch note overlay and block game keys while it's visible
+  if (isPatchNoteVisible()) {
+    if (e.key === KEYS.ESCAPE || e.key === KEYS.ENTER || e.key === KEYS.SPACE) {
+      dismissPatchNote();
+    }
+    e.preventDefault();
+    return;
+  }
+
   // Don't intercept keys when the name input has focus
   const nameInputFocused = document.activeElement === document.getElementById('player-name');
 
