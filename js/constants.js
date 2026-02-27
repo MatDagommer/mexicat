@@ -1,6 +1,6 @@
 // Game Configuration Constants
 
-const APP_VERSION = "0.1.1";
+const APP_VERSION = "0.1.2";
 
 // Patch note popup: shown to users who haven't dismissed it yet, until this timestamp.
 // Set to release date + 48h (epoch ms). Set to 0 to disable.
