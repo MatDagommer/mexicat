@@ -403,22 +403,20 @@ class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Game Over text
+    const midX = this.canvas.width / 2;
+    const midY = this.canvas.height / 2 - 150;
     this.ctx.fillStyle = GAME_CONFIG.COLOR_BLACK;
     this.ctx.font = 'bold 64px "Courier New", monospace';
     this.ctx.textAlign = 'center';
-    this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 50);
+    this.ctx.fillText('GAME OVER', midX, midY);
 
     // Final score
     this.ctx.font = 'bold 32px "Courier New", monospace';
-    this.ctx.fillText(`Final Score: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 20);
+    this.ctx.fillText(`Final Score: ${this.score}`, midX, midY + 70);
 
     // Stage reached
     this.ctx.font = '24px "Courier New", monospace';
-    this.ctx.fillText(
-      `Stage ${this.stageManager.currentStage} Reached`,
-      this.canvas.width / 2,
-      this.canvas.height / 2 + 60
-    );
+    this.ctx.fillText(`Stage ${this.stageManager.currentStage} Reached`, midX, midY + 110);
   }
 
   renderLeaderboard() {
