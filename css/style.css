@@ -95,9 +95,9 @@ canvas {
 /* Name entry overlay (shown on game over) */
 .name-overlay {
   position: absolute;
-  top: 50%;
+  bottom: 4%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.97);
   border: 3px solid #000;
   border-radius: 8px;
