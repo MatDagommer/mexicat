@@ -263,6 +263,16 @@ class Game {
     const input = document.getElementById('player-name');
     input.value = '';
     input.focus();
+
+    const rankDisplay = document.getElementById('rank-display');
+    rankDisplay.textContent = 'Loading rank\u2026';
+    fetchRankInfo(this.score)
+      .then(info => {
+        rankDisplay.textContent = info
+          ? `You ranked ${ordinal(info.rank)} out of ${info.total}.`
+          : '';
+      })
+      .catch(() => { rankDisplay.textContent = ''; });
   }
 
   async showLeaderboard(name) {

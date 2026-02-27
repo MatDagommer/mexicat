@@ -95,7 +95,7 @@ canvas {
 /* Name entry overlay (shown on game over) */
 .name-overlay {
   position: absolute;
-  bottom: 4%;
+  bottom: 16%;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.97);
@@ -110,6 +110,13 @@ canvas {
 
 .name-overlay.hidden {
   display: none;
+}
+
+.rank-display {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 8px;
+  min-height: 1.2em;
 }
 
 .overlay-title {

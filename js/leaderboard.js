@@ -24,6 +24,38 @@ function computeMaxPossibleScore(stageReached, elapsedMs) {
   return maxScore;
 }
 
+// Returns e.g. "1st", "2nd", "3rd", "13th", "21st"
+function ordinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+// Fetches how many scores are strictly above `score` (→ rank) and the total entry count.
+async function fetchRankInfo(score) {
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Prefer': 'count=exact'
+  };
+
+  const [aboveRes, totalRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/Leaderboard?score=gt.${score}`, { method: 'HEAD', headers }),
+    fetch(`${SUPABASE_URL}/rest/v1/Leaderboard`,                   { method: 'HEAD', headers })
+  ]);
+
+  const parseCount = res => {
+    const range = res.headers.get('Content-Range');
+    const match = range && range.match(/\/(\d+)$/);
+    return match ? parseInt(match[1], 10) : null;
+  };
+
+  const above = parseCount(aboveRes);
+  const total = parseCount(totalRes);
+  if (above === null || total === null) return null;
+  return { rank: above + 1, total };
+}
+
 const SUPABASE_URL = 'https://zodnlyucwnlskbkvblnv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZG5seXVjd25sc2tia3ZibG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5OTE4NjIsImV4cCI6MjA4NzU2Nzg2Mn0.SPV-BjNBpmgpjSiQrTEaFdBRO7n04VOeL4S1FOk75DY';
 
