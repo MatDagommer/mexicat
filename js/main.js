@@ -15,7 +15,6 @@ function isPatchNoteVisible() {
 }
 
 function dismissPatchNote() {
-  localStorage.setItem('seenPatchNote_' + APP_VERSION, '1');
   document.getElementById('patch-note-overlay').classList.add('hidden');
 }
 
@@ -39,8 +38,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Patch note popup
   document.getElementById('patch-note-version').textContent = APP_VERSION;
-  const seenKey = 'seenPatchNote_' + APP_VERSION;
-  if (PATCH_NOTE_EXPIRY > 0 && Date.now() < PATCH_NOTE_EXPIRY && !localStorage.getItem(seenKey)) {
+  if (PATCH_NOTE_EXPIRY > 0 && Date.now() < PATCH_NOTE_EXPIRY) {
     document.getElementById('patch-note-overlay').classList.remove('hidden');
   }
   document.getElementById('patch-note-dismiss').addEventListener('click', dismissPatchNote);
