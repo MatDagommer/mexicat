@@ -93,6 +93,25 @@ class Game {
     }
   }
 
+  pause() {
+    if (this.state === 'playing') {
+      this.state = 'paused';
+      this.music.pause();
+      // Clear key states so the cat doesn't lurch on resume
+      keysPressed.up = false;
+      keysPressed.down = false;
+      keysPressed.left = false;
+      keysPressed.right = false;
+    }
+  }
+
+  resume() {
+    if (this.state === 'paused') {
+      this.state = 'playing';
+      this.music.play();
+    }
+  }
+
   restart() {
     this.gameOverMusic.pause();
     document.getElementById('name-overlay').classList.add('hidden');
@@ -318,6 +337,8 @@ class Game {
       this.renderMenu();
     } else if (this.state === 'playing') {
       this.renderGame();
+    } else if (this.state === 'paused') {
+      this.renderPaused();
     } else if (this.state === 'gameover') {
       this.renderGameOver();
     } else if (this.state === 'leaderboard') {
@@ -399,6 +420,26 @@ class Game {
     if (this.tacoText) this.drawTacoText();
 
     this.drawUI();
+  }
+
+  renderPaused() {
+    // Draw the frozen game state underneath
+    this.renderGame();
+
+    // Semi-transparent overlay
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    const midX = this.canvas.width / 2;
+    const midY = this.canvas.height / 2;
+
+    this.ctx.textAlign = 'center';
+    this.ctx.fillStyle = GAME_CONFIG.COLOR_WHITE;
+    this.ctx.font = 'bold 64px "Courier New", monospace';
+    this.ctx.fillText('Paused', midX, midY - 30);
+
+    this.ctx.font = '24px "Courier New", monospace';
+    this.ctx.fillText('Enter or Space to Resume', midX, midY + 30);
   }
 
   renderGameOver() {

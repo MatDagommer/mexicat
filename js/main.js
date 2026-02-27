@@ -54,7 +54,7 @@ function handleKeyDown(e) {
   // Don't intercept keys when the name input has focus
   const nameInputFocused = document.activeElement === document.getElementById('player-name');
 
-  if (!nameInputFocused && [KEYS.UP, KEYS.DOWN, KEYS.LEFT, KEYS.RIGHT, KEYS.SPACE].includes(e.key)) {
+  if (!nameInputFocused && [KEYS.UP, KEYS.DOWN, KEYS.LEFT, KEYS.RIGHT, KEYS.SPACE, KEYS.ESCAPE].includes(e.key)) {
     e.preventDefault();
   }
 
@@ -66,12 +66,19 @@ function handleKeyDown(e) {
     return;
   }
 
-  // Playing state - Track arrow key states
+  // Playing state - Track arrow key states, or pause on Escape
   if (game.state === 'playing') {
+    if (e.key === KEYS.ESCAPE) { game.pause(); return; }
     if (e.key === KEYS.UP) keysPressed.up = true;
     if (e.key === KEYS.DOWN) keysPressed.down = true;
     if (e.key === KEYS.LEFT) keysPressed.left = true;
     if (e.key === KEYS.RIGHT) keysPressed.right = true;
+  }
+
+  // Paused state - Resume on Enter or Space
+  if (game.state === 'paused' && (e.key === KEYS.ENTER || e.key === KEYS.SPACE)) {
+    game.resume();
+    return;
   }
 
   // Leaderboard state - Play again

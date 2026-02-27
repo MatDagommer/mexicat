@@ -58,5 +58,7 @@ const KEYS = {
   DOWN: 'ArrowDown',
   LEFT: 'ArrowLeft',
   RIGHT: 'ArrowRight',
-  SPACE: ' '
+  SPACE: ' ',
+  ENTER: 'Enter',
+  ESCAPE: 'Escape'
 };
