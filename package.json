@@ -9,6 +9,7 @@
   "devDependencies": {
     "@release-it/bumper": "^7.0.2",
     "husky": "^9.0.0",
-    "release-it": "^19.0.0"
+    "release-it": "^19.0.0",
+    "supabase": "^2.76.15"
   }
 }

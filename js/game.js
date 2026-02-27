@@ -299,20 +299,10 @@ class Game {
       const elapsed = (this.startTime && this.gameOverTime)
         ? this.gameOverTime - this.startTime
         : 0;
-      const maxPossible = computeMaxPossibleScore(this.stageManager.currentStage, elapsed);
-      const TOLERANCE = 1.1;
-
-      if (elapsed > 0 && this.score > maxPossible * TOLERANCE) {
-        console.warn(
-          `[Anomaly] Score ${this.score} rejected ` +
-          `(max expected: ${maxPossible}, elapsed: ${elapsed}ms, stage: ${this.stageManager.currentStage})`
-        );
-      } else {
-        try {
-          await submitScore(name.trim(), this.score);
-        } catch (e) {
-          console.error('Failed to submit score:', e);
-        }
+      try {
+        await submitScore(name.trim(), this.score, this.stageManager.currentStage, elapsed);
+      } catch (e) {
+        console.error('Failed to submit score:', e);
       }
     }
 
