@@ -5,9 +5,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Must stay in sync with game constants.
+const STAGE_DURATION = 20_000; // ms per stage
+const MAX_STAGE = 50;          // generous upper bound; stage 50 = 13.25x speed, humanly impossible
+
 // Mirror of computeMaxPossibleScore in leaderboard.js — keep in sync if game constants change.
 function computeMaxPossibleScore(stageReached: number, elapsedMs: number): number {
-  const STAGE_DURATION = 20000;
   const BASE_SPAWN_RATE = 3000;
   const SPAWN_DECREMENT = 200;
   const MIN_SPAWN_RATE = 1500;
@@ -18,7 +21,7 @@ function computeMaxPossibleScore(stageReached: number, elapsedMs: number): numbe
 
   for (let stage = 1; stage <= stageReached; stage++) {
     const spawnRate = Math.max(MIN_SPAWN_RATE, BASE_SPAWN_RATE - (stage - 1) * SPAWN_DECREMENT);
-    const stageTime = Math.min(timeRemaining, STAGE_DURATION);
+    const stageTime = Math.min(timeRemaining, STAGE_DURATION); // module-level constant
     maxScore += Math.ceil(stageTime / spawnRate) * POINTS_PER_COLLECTIBLE;
     timeRemaining -= stageTime;
     if (timeRemaining <= 0) break;
@@ -68,16 +71,31 @@ Deno.serve(async (req) => {
   }
 
   // Validate stage and elapsed
-  if (typeof stage !== 'number' || !Number.isInteger(stage) || stage < 1) {
+  if (typeof stage !== 'number' || !Number.isInteger(stage) || stage < 1 || stage > MAX_STAGE) {
     return new Response(JSON.stringify({ error: 'Invalid stage' }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 
-  if (typeof elapsed !== 'number' || elapsed <= 0) {
+  if (typeof elapsed !== 'number' || !isFinite(elapsed) || elapsed <= 0) {
     return new Response(JSON.stringify({ error: 'Invalid elapsed time' }), {
       status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Elapsed must be consistent with the claimed stage:
+  //   - minimum: player must have survived (stage-1) full stages before dying
+  //   - maximum: total game can't exceed MAX_STAGE full stages
+  const minElapsed = (stage - 1) * STAGE_DURATION;
+  const maxElapsed = MAX_STAGE * STAGE_DURATION;
+  if (elapsed < minElapsed || elapsed > maxElapsed) {
+    console.warn(
+      `[Anomaly] elapsed ${elapsed}ms inconsistent with stage ${stage} (expected ${minElapsed}–${maxElapsed}ms)`
+    );
+    return new Response(JSON.stringify({ error: 'Score rejected: anomaly detected' }), {
+      status: 422,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
